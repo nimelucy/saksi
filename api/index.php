@@ -529,7 +529,7 @@ function simpanSemua() {
     // KIRIM AJAX KE GOOGLE APPS SCRIPT
     $.ajax({
         // 👇👇👇 GANTI URL DI BAWAH INI DENGAN URL DARI GOOGLE APPS SCRIPT KAMU 👇👇👇
-        url: "https://script.google.com/macros/s/AKfycbz96x0h6NNwO6t8TmhJuVNIfiw-Vf_G_9yK-m4XtyQLAjqnv7LmK27LKvYVB3-xQ2A/exec", 
+        url: "https://script.google.com/macros/s/AKfycbzC5jIA12shNniNw7yM4hdrflveQcXnx3rdAiygb0R4byvl8_G1sG6qjlTQP1NI5ws/exec", 
         type: "POST",
         contentType: "text/plain;charset=utf-8", 
         data: JSON.stringify(dataKirim),

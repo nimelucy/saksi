@@ -365,7 +365,6 @@ function hitungUmur(tglLahirStr) {
     return isNaN(age) || age < 0 ? '' : age;
 }
 
-// LOGIKA UPDATE URUTAN DAN BADGE LENGKAP/TERKIRIM
 function updateUrutanSaksi() {
     let urutan = 1;
     $(".saksi-box").each(function() {
@@ -373,7 +372,6 @@ function updateUrutanSaksi() {
         let namaInput = $(this).find(".input-nama-saksi").val();
         let statusTerkirim = $(this).attr("data-status") === "terkirim";
         
-        // Pengecekan kelengkapan data
         let isLengkap = true;
         $(this).find(".req-input").each(function() {
             if ($(this).val() == null || $(this).val().toString().trim() === "") {
@@ -386,7 +384,6 @@ function updateUrutanSaksi() {
             isLengkap = false;
         }
         
-        // Logika penentuan Badge
         let badge = "";
         if (statusTerkirim) {
             badge = "<span class='badge-terkirim'>Terkirim</span>";
@@ -449,7 +446,6 @@ function hapusSaksi(id, event) {
     }
 }
 
-// LOGIKA SIMPAN KE GOOGLE APPS SCRIPT (GAS)
 function simpanSemua() {
     let isValid = true;
     
@@ -490,11 +486,9 @@ function simpanSemua() {
         return;
     }
 
-    // Tampilan Loading
     let btnSimpan = $(".btn-simpan");
     btnSimpan.text("⏳ Sedang Menyimpan ke Spreadsheet...").prop("disabled", true).css("background-color", "#95a5a6");
 
-    // Mengemas data inputan ke dalam JSON
     let dataKirim = {
         nomor_perkara: $("#nomor").val(),
         saksi: []
@@ -503,40 +497,38 @@ function simpanSemua() {
     $(".saksi-box").each(function() {
         let box = $(this);
         
-        // Fungsi helper agar kita bisa ngambil TEKS-nya, bukan nomor ID/Valuenya
-        let getText = function(namaInput) {
+        let getTeksDropdown = function(namaInput) {
             let el = box.find("[name*='" + namaInput + "']");
             return el.val() ? el.find("option:selected").text() : "";
         };
 
         dataKirim.saksi.push({
-            jenis_pihak: getText("[jenis_pihak]"),
+            jenis_pihak: getTeksDropdown("[jenis_pihak]"),
             nama: box.find("[name*='[nama]']").val(),
             tempat_lahir: box.find("[name*='[tempat_lahir]']").val(),
             tgl_lahir: box.find("[name*='[tgl_lahir]']").val(),
             umur: box.find("[name*='[umur]']").val(),
-            jenis_identitas: getText("[jenis_identitas]"),
+            jenis_identitas: getTeksDropdown("[jenis_identitas]"),
             no_identitas: box.find("[name*='[no_identitas]']").val(),
             no_tlp: box.find("[name*='[no_tlp]']").val(),
             email: box.find("[name*='[email]']").val(),
             alamat: box.find("[name*='[alamat]']").val(), 
-            jenis_kelamin: getText("[jenis_kelamin]"),
-            agama: getText("[agama]"),
-            warga_negara: getText("[warga_negara]"),
-            pekerjaan: getText("[pekerjaan]"),
+            jenis_kelamin: getTeksDropdown("[jenis_kelamin]"),
+            agama: getTeksDropdown("[agama]"),
+            warga_negara: getTeksDropdown("[warga_negara]"),
+            pekerjaan: getTeksDropdown("[pekerjaan]"),
             pekerjaan_lain: box.find("[name*='[pekerjaan_lainnya]']").val(),
-            status_kawin: getText("[status_kawin]"),
-            pendidikan: getText("[pendidikan]"),
-            gol_darah: getText("[gol_darah]"),
-            difabel: getText("[difabel]"),
+            status_kawin: getTeksDropdown("[status_kawin]"),
+            pendidikan: getTeksDropdown("[pendidikan]"),
+            gol_darah: getTeksDropdown("[gol_darah]"),
+            difabel: getTeksDropdown("[difabel]"),
             keterangan: box.find("[name*='[keterangan]']").val()
         });
     });
 
-    // KIRIM AJAX KE GOOGLE APPS SCRIPT
     $.ajax({
-        // URL Milikmu Sudah Dipasang!
-        url: "https://script.google.com/macros/s/AKfycby2htt7DHL9k5H3pqigvmmfZESMCX--eb1pnnSL4SzJBBifPEXJm6wIZG2uHDJtaas/exec", 
+        // GANTI URL DI BAWAH INI DENGAN URL GOOGLE APPS SCRIPT KAMU
+        url: "https://script.google.com/macros/s/AKfycbw8umBd9taf3aY-ooTdUqQjL1P53wvfev1KwcvBGXvFsdxzenCKPq3RxgtWx-ZCuGM/exec", 
         type: "POST",
         contentType: "text/plain;charset=utf-8", 
         data: JSON.stringify(dataKirim),
@@ -545,7 +537,6 @@ function simpanSemua() {
             if(response.status === "sukses") {
                 alert("✅ " + response.pesan);
                 
-                // Ubah Tampilan menjadi Terkirim
                 $(".saksi-box").attr("data-status", "terkirim");
                 $(".saksi-body").slideUp(); 
                 $(".toggle-hint").text("▼ Ketuk Buka");
@@ -557,11 +548,10 @@ function simpanSemua() {
             }
         },
         error: function(xhr, status, error) {
-            alert("Terjadi kesalahan! Pastikan perangkat tersambung internet.");
+            alert("Terjadi kesalahan! Pastikan perangkat tersambung internet dan URL Google Script sudah benar.");
             console.error(error);
         },
         complete: function() {
-            // Kembalikan tombol seperti semula
             btnSimpan.text("Simpan Semua Data").prop("disabled", false).css("background-color", "#f39c12");
         }
     });
@@ -580,7 +570,6 @@ function tambahSaksi() {
     noSaksi++;
     $("#listSaksiContainer").show();
     
-    // Menutup form sebelumnya dan mengubah hint-nya
     $(".saksi-body").slideUp(); 
     $(".toggle-hint").text("▼ Ketuk Buka");
     
@@ -592,7 +581,6 @@ function tambahSaksi() {
                     <span id="title_saksi_${noSaksi}">Saksi Baru</span>
                 </div>
                 <div style="display:flex; align-items:center;">
-                    <!-- PETUNJUK KLIK (TOGGLE HINT) -->
                     <span class="toggle-hint" id="toggle_hint_${noSaksi}">▲ Tutup</span>
                     <button type="button" class="btn-batal" onclick="hapusSaksi(${noSaksi}, event)">Hapus</button>
                 </div>
@@ -705,9 +693,7 @@ function tambahSaksi() {
                 <div class="form-group">
                     <label>Warga Negara <span class="req">*</span></label>
                     <select name="saksi[${noSaksi}][warga_negara]" id="warga_${noSaksi}" class="req-input">
-                        <option value="98" selected="">Indonesia</option>
-                        <option value="155">Malaysia</option>
-                        <option value="195">Singapore</option>
+                        <option value="16">Aaland Islands</option><option value="3">Afghanistan</option><option value="6">Albania</option><option value="60">Algeria</option><option value="1">Andorra</option><option value="9">Angola</option><option value="5">Anguilla</option><option value="10">Antarctica</option><option value="4">Antigua &amp; Barbuda</option><option value="11">Argentina</option><option value="7">Armenia</option><option value="15">Aruba</option><option value="14">Australia</option><option value="13">Austria</option><option value="17">Azerbaijan</option><option value="32">Bahamas</option><option value="24">Bahrain</option><option value="20">Bangladesh</option><option value="19">Barbados</option><option value="35">Belarus</option><option value="21">Belgium</option><option value="36">Belize</option><option value="26">Benin</option><option value="28">Bermuda</option><option value="33">Bhutan</option><option value="30">Bolivia</option><option value="18">Bosnia &amp; Herzegovina</option><option value="34">Botswana</option><option value="31">Brazil</option><option value="75">Britain (UK)</option><option value="103">British Indian Ocean Territory</option><option value="29">Brunei</option><option value="23">Bulgaria</option><option value="22">Burkina Faso</option><option value="25">Burundi</option><option value="114">Cambodia</option><option value="46">Cameroon</option><option value="37">Canada</option><option value="51">Cape Verde</option><option value="121">Cayman Islands</option><option value="40">Central African Rep.</option><option value="210">Chad</option><option value="45">Chile</option><option value="47">China</option><option value="52">Christmas Island</option><option value="38">Cocos (Keeling) Islands</option><option value="48">Colombia</option><option value="116">Comoros</option><option value="39">Congo (Dem. Rep.)</option><option value="41">Congo (Rep.)</option><option value="44">Cook Islands</option><option value="49">Costa Rica</option><option value="43">Cote d'Ivoire</option><option value="95">Croatia</option><option value="50">Cuba</option><option value="53">Cyprus</option><option value="54">Czech Republic</option><option value="57">Denmark</option><option value="56">Djibouti</option><option value="58">Dominica</option><option value="59">Dominican Republic</option><option value="216">East Timor</option><option value="61">Ecuador</option><option value="63">Egypt</option><option value="206">El Salvador</option><option value="86">Equatorial Guinea</option><option value="65">Eritrea</option><option value="62">Estonia</option><option value="67">Ethiopia</option><option value="70">Falkland Islands</option><option value="72">Faroe Islands</option><option value="69">Fiji</option><option value="68">Finland</option><option value="73">France</option><option value="78">French Guiana</option><option value="172">French Polynesia</option><option value="211">French Southern &amp; Antarctic Lands</option><option value="74">Gabon</option><option value="83">Gambia</option><option value="77">Georgia</option><option value="55">Germany</option><option value="80">Ghana</option><option value="81">Gibraltar</option><option value="87">Greece</option><option value="82">Greenland</option><option value="76">Grenada</option><option value="85">Guadeloupe</option><option value="90">Guam</option><option value="89">Guatemala</option><option value="79">Guernsey</option><option value="84">Guinea</option><option value="91">Guinea-Bissau</option><option value="92">Guyana</option><option value="96">Haiti</option><option value="94">Honduras</option><option value="93">Hong Kong</option><option value="97">Hungary</option><option value="106">Iceland</option><option value="102">India</option><option value="98" selected="">Indonesia</option><option value="105">Iran</option><option value="104">Iraq</option><option value="99">Ireland</option><option value="101">Isle of Man</option><option value="100">Israel</option><option value="107">Italy</option><option value="109">Jamaica</option><option value="111">Japan</option><option value="108">Jersey</option><option value="110">Jordan</option><option value="122">Kazakhstan</option><option value="112">Kenya</option><option value="115">Kiribati</option><option value="118">Korea (North)</option><option value="119">Korea (South)</option><option value="120">Kuwait</option><option value="113">Kyrgyzstan</option><option value="123">Laos</option><option value="132">Latvia</option><option value="124">Lebanon</option><option value="129">Lesotho</option><option value="128">Liberia</option><option value="133">Libya</option><option value="126">Liechtenstein</option><option value="130">Lithuania</option><option value="131">Luxembourg</option><option value="145">Macau</option><option value="141">Macedonia</option><option value="139">Madagascar</option><option value="153">Malawi</option><option value="155">Malaysia</option><option value="152">Maldives</option><option value="142">Mali</option><option value="150">Malta</option><option value="140">Marshall Islands</option><option value="147">Martinique</option><option value="148">Mauritania</option><option value="151">Mauritius</option><option value="241">Mayotte</option><option value="154">Mexico</option><option value="71">Micronesia</option><option value="136">Moldova</option><option value="135">Monaco</option><option value="144">Mongolia</option><option value="137">Montenegro</option><option value="149">Montserrat</option><option value="134">Morocco</option><option value="156">Mozambique</option><option value="143">Myanmar (Burma)</option><option value="157">Namibia</option><option value="166">Nauru</option><option value="165">Nepal</option><option value="163">Netherlands</option><option value="8">Netherlands Antilles</option><option value="158">New Caledonia</option><option value="168">New Zealand</option><option value="162">Nicaragua</option><option value="159">Niger</option><option value="161">Nigeria</option><option value="167">Niue</option><option value="160">Norfolk Island</option><option value="146">Northern Mariana Islands</option><option value="164">Norway</option><option value="169">Oman</option><option value="175">Pakistan</option><option value="182">Palau</option><option value="180">Palestine</option><option value="170">Panama</option><option value="173">Papua New Guinea</option><option value="183">Paraguay</option><option value="171">Peru</option><option value="174">Philippines</option><option value="178">Pitcairn</option><option value="176">Poland</option><option value="181">Portugal</option><option value="179">Puerto Rico</option><option value="184">Qatar</option><option value="185">Reunion</option><option value="186">Romania</option><option value="188">Russia</option><option value="189">Rwanda</option><option value="12">Samoa (American)</option><option value="239">Samoa (western)</option><option value="201">San Marino</option><option value="205">Sao Tome &amp; Principe</option><option value="190">Saudi Arabia</option><option value="202">Senegal</option><option value="187">Serbia</option><option value="192">Seychelles</option><option value="200">Sierra Leone</option><option value="195">Singapore</option><option value="199">Slovakia</option><option value="197">Slovenia</option><option value="191">Solomon Islands</option><option value="203">Somalia</option><option value="242">South Africa</option><option value="88">South Georgia &amp; the South Sandwich Islands</option><option value="66">Spain</option><option value="127">Sri Lanka</option><option value="27">St Barthelemy</option><option value="196">St Helena</option><option value="117">St Kitts &amp; Nevis</option><option value="125">St Lucia</option><option value="138">St Martin (French part)</option><option value="177">St Pierre &amp; Miquelon</option><option value="232">St Vincent</option><option value="193">Sudan</option><option value="204">Suriname</option><option value="198">Svalbard &amp; Jan Mayen</option><option value="208">Swaziland</option><option value="194">Sweden</option><option value="42">Switzerland</option><option value="207">Syria</option><option value="223">Taiwan</option><option value="214">Tajikistan</option><option value="224">Tanzania</option><option value="213">Thailand</option><option value="212">Togo</option><option value="215">Tokelau</option><option value="219">Tonga</option><option value="221">Trinidad &amp; Tobago</option><option value="218">Tunisia</option><option value="220">Turkey</option><option value="217">Turkmenistan</option><option value="209">Turks &amp; Caicos Is</option><option value="222">Tuvalu</option><option value="226">Uganda</option><option value="225">Ukraine</option><option value="2">United Arab Emirates</option><option value="228">United States</option><option value="229">Uruguay</option><option value="227">US minor outlying islands</option><option value="230">Uzbekistan</option><option value="237">Vanuatu</option><option value="231">Vatican City</option><option value="233">Venezuela</option><option value="236">Vietnam</option><option value="234">Virgin Islands (UK)</option><option value="235">Virgin Islands (US)</option><option value="238">Wallis &amp; Futuna</option><option value="64">Western Sahara</option><option value="245">xx</option><option value="240">Yemen</option><option value="243">Zambia</option><option value="244">Zimbabwe</option>
                     </select>
                 </div>
                 
@@ -792,7 +778,6 @@ function tambahSaksi() {
             $(this).css({"border": "1px solid #ccd1d9", "background-color": "#fafafa"});
             targetUmur.css({"border": "1px solid #ccd1d9", "background-color": "#eef2f5"});
             
-            // Hapus status terkirim dan Munculkan Hapus jika user ngedit form setelah dikirim
             let box = $(this).closest(".saksi-box");
             box.attr("data-status", "draft");
             box.find(".btn-batal").show();
@@ -814,7 +799,6 @@ function tambahSaksi() {
 
 $(function(){
 
-    // Saat diketik/diubah, hilangkan border error, update badge, dan kembalikan tombol Hapus
     $(document).on("input change", ".req-input, .input-pekerjaan-lain", function() {
         if ($(this).val() !== null && $(this).val().toString().trim() !== "") {
             if($(this).hasClass("select2-hidden-accessible")) {
@@ -824,7 +808,6 @@ $(function(){
             }
         }
         
-        // Kalau data diedit lagi, ubah status Terkirim balik jadi Draft dan munculkan tombol Hapus
         let box = $(this).closest(".saksi-box");
         box.attr("data-status", "draft");
         box.find(".btn-batal").show();

@@ -496,6 +496,10 @@ function simpanSemua() {
     $(".saksi-box").attr("data-status", "terkirim");
     $(".saksi-body").slideUp(); // Otomatis menutup semua form
     $(".toggle-hint").text("▼ Ketuk Buka");
+    
+    // SEMBUNYIKAN TOMBOL HAPUS SAAT STATUS TERKIRIM
+    $(".saksi-box[data-status='terkirim']").find(".btn-batal").hide();
+    
     updateUrutanSaksi(); // Mengubah badge menjadi Terkirim
 }
 
@@ -724,8 +728,11 @@ function tambahSaksi() {
             $(this).css({"border": "1px solid #ccd1d9", "background-color": "#fafafa"});
             targetUmur.css({"border": "1px solid #ccd1d9", "background-color": "#eef2f5"});
             
-            // Hapus status terkirim jika user ngedit form setelah dikirim
-            $(this).closest(".saksi-box").attr("data-status", "draft");
+            // Hapus status terkirim dan Munculkan Hapus jika user ngedit form setelah dikirim
+            let box = $(this).closest(".saksi-box");
+            box.attr("data-status", "draft");
+            box.find(".btn-batal").show();
+            
             updateUrutanSaksi();
         }
     });
@@ -743,7 +750,7 @@ function tambahSaksi() {
 
 $(function(){
 
-    // Saat diketik/diubah, hilangkan border error dan update badge
+    // Saat diketik/diubah, hilangkan border error, update badge, dan kembalikan tombol Hapus
     $(document).on("input change", ".req-input, .input-pekerjaan-lain", function() {
         if ($(this).val() !== null && $(this).val().toString().trim() !== "") {
             if($(this).hasClass("select2-hidden-accessible")) {
@@ -753,8 +760,11 @@ $(function(){
             }
         }
         
-        // Kalau data diedit lagi, ubah status Terkirim balik jadi Draft
-        $(this).closest(".saksi-box").attr("data-status", "draft");
+        // Kalau data diedit lagi, ubah status Terkirim balik jadi Draft dan munculkan tombol Hapus
+        let box = $(this).closest(".saksi-box");
+        box.attr("data-status", "draft");
+        box.find(".btn-batal").show();
+        
         updateUrutanSaksi();
     });
 

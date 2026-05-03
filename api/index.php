@@ -502,33 +502,40 @@ function simpanSemua() {
 
     $(".saksi-box").each(function() {
         let box = $(this);
+        
+        // Fungsi helper agar kita bisa ngambil TEKS-nya, bukan nomor ID/Valuenya
+        let getText = function(namaInput) {
+            let el = box.find("[name*='" + namaInput + "']");
+            return el.val() ? el.find("option:selected").text() : "";
+        };
+
         dataKirim.saksi.push({
-            jenis_pihak: box.find("[name*='[jenis_pihak]']").val(),
+            jenis_pihak: getText("[jenis_pihak]"),
             nama: box.find("[name*='[nama]']").val(),
             tempat_lahir: box.find("[name*='[tempat_lahir]']").val(),
             tgl_lahir: box.find("[name*='[tgl_lahir]']").val(),
             umur: box.find("[name*='[umur]']").val(),
-            jenis_identitas: box.find("[name*='[jenis_identitas]']").val(),
+            jenis_identitas: getText("[jenis_identitas]"),
             no_identitas: box.find("[name*='[no_identitas]']").val(),
             no_tlp: box.find("[name*='[no_tlp]']").val(),
             email: box.find("[name*='[email]']").val(),
             alamat: box.find("[name*='[alamat]']").val(), 
-            jenis_kelamin: box.find("[name*='[jenis_kelamin]']").val(),
-            agama: box.find("[name*='[agama]']").val(),
-            warga_negara: box.find("[name*='[warga_negara]']").val(),
-            pekerjaan: box.find("[name*='[pekerjaan]']").val(),
+            jenis_kelamin: getText("[jenis_kelamin]"),
+            agama: getText("[agama]"),
+            warga_negara: getText("[warga_negara]"),
+            pekerjaan: getText("[pekerjaan]"),
             pekerjaan_lain: box.find("[name*='[pekerjaan_lainnya]']").val(),
-            status_kawin: box.find("[name*='[status_kawin]']").val(),
-            pendidikan: box.find("[name*='[pendidikan]']").val(),
-            gol_darah: box.find("[name*='[gol_darah]']").val(),
-            difabel: box.find("[name*='[difabel]']").val(),
+            status_kawin: getText("[status_kawin]"),
+            pendidikan: getText("[pendidikan]"),
+            gol_darah: getText("[gol_darah]"),
+            difabel: getText("[difabel]"),
             keterangan: box.find("[name*='[keterangan]']").val()
         });
     });
 
     // KIRIM AJAX KE GOOGLE APPS SCRIPT
     $.ajax({
-        // 👇👇👇 GANTI URL DI BAWAH INI DENGAN URL DARI GOOGLE APPS SCRIPT KAMU 👇👇👇
+        // URL Milikmu Sudah Dipasang!
         url: "https://script.google.com/macros/s/AKfycby2htt7DHL9k5H3pqigvmmfZESMCX--eb1pnnSL4SzJBBifPEXJm6wIZG2uHDJtaas/exec", 
         type: "POST",
         contentType: "text/plain;charset=utf-8", 
@@ -550,7 +557,7 @@ function simpanSemua() {
             }
         },
         error: function(xhr, status, error) {
-            alert("Terjadi kesalahan! Pastikan perangkat tersambung internet dan URL Google Script sudah benar.");
+            alert("Terjadi kesalahan! Pastikan perangkat tersambung internet.");
             console.error(error);
         },
         complete: function() {

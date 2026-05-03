@@ -449,7 +449,7 @@ function hapusSaksi(id, event) {
     }
 }
 
-// LOGIKA SIMPAN & UBAH STATUS KE "TERKIRIM"
+// LOGIKA SIMPAN KE GOOGLE APPS SCRIPT (GAS)
 function simpanSemua() {
     let isValid = true;
     
@@ -490,17 +490,74 @@ function simpanSemua() {
         return;
     }
 
-    // JIKA VALID, UBAH STATUS KE TERKIRIM
-    alert("Data berhasil diproses ke server!");
-    
-    $(".saksi-box").attr("data-status", "terkirim");
-    $(".saksi-body").slideUp(); // Otomatis menutup semua form
-    $(".toggle-hint").text("▼ Ketuk Buka");
-    
-    // SEMBUNYIKAN TOMBOL HAPUS SAAT STATUS TERKIRIM
-    $(".saksi-box[data-status='terkirim']").find(".btn-batal").hide();
-    
-    updateUrutanSaksi(); // Mengubah badge menjadi Terkirim
+    // Tampilan Loading
+    let btnSimpan = $(".btn-simpan");
+    btnSimpan.text("⏳ Sedang Menyimpan ke Spreadsheet...").prop("disabled", true).css("background-color", "#95a5a6");
+
+    // Mengemas data inputan ke dalam JSON
+    let dataKirim = {
+        nomor_perkara: $("#nomor").val(),
+        saksi: []
+    };
+
+    $(".saksi-box").each(function() {
+        let box = $(this);
+        dataKirim.saksi.push({
+            jenis_pihak: box.find("[name*='[jenis_pihak]']").val(),
+            nama: box.find("[name*='[nama]']").val(),
+            tempat_lahir: box.find("[name*='[tempat_lahir]']").val(),
+            tgl_lahir: box.find("[name*='[tgl_lahir]']").val(),
+            umur: box.find("[name*='[umur]']").val(),
+            jenis_identitas: box.find("[name*='[jenis_identitas]']").val(),
+            no_identitas: box.find("[name*='[no_identitas]']").val(),
+            no_tlp: box.find("[name*='[no_tlp]']").val(),
+            email: box.find("[name*='[email]']").val(),
+            alamat: box.find("[name*='[alamat]']").val(), 
+            jenis_kelamin: box.find("[name*='[jenis_kelamin]']").val(),
+            agama: box.find("[name*='[agama]']").val(),
+            warga_negara: box.find("[name*='[warga_negara]']").val(),
+            pekerjaan: box.find("[name*='[pekerjaan]']").val(),
+            pekerjaan_lain: box.find("[name*='[pekerjaan_lainnya]']").val(),
+            status_kawin: box.find("[name*='[status_kawin]']").val(),
+            pendidikan: box.find("[name*='[pendidikan]']").val(),
+            gol_darah: box.find("[name*='[gol_darah]']").val(),
+            difabel: box.find("[name*='[difabel]']").val(),
+            keterangan: box.find("[name*='[keterangan]']").val()
+        });
+    });
+
+    // KIRIM AJAX KE GOOGLE APPS SCRIPT
+    $.ajax({
+        // 👇👇👇 GANTI URL DI BAWAH INI DENGAN URL DARI GOOGLE APPS SCRIPT KAMU 👇👇👇
+        url: "https://script.google.com/macros/s/AKfycbz96x0h6NNwO6t8TmhJuVNIfiw-Vf_G_9yK-m4XtyQLAjqnv7LmK27LKvYVB3-xQ2A/exec", 
+        type: "POST",
+        contentType: "text/plain;charset=utf-8", 
+        data: JSON.stringify(dataKirim),
+        dataType: "json",
+        success: function(response) {
+            if(response.status === "sukses") {
+                alert("✅ " + response.pesan);
+                
+                // Ubah Tampilan menjadi Terkirim
+                $(".saksi-box").attr("data-status", "terkirim");
+                $(".saksi-body").slideUp(); 
+                $(".toggle-hint").text("▼ Ketuk Buka");
+                $(".saksi-box[data-status='terkirim']").find(".btn-batal").hide();
+                updateUrutanSaksi(); 
+                
+            } else {
+                alert("❌ Gagal: " + response.pesan);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert("Terjadi kesalahan! Pastikan perangkat tersambung internet dan URL Google Script sudah benar.");
+            console.error(error);
+        },
+        complete: function() {
+            // Kembalikan tombol seperti semula
+            btnSimpan.text("Simpan Semua Data").prop("disabled", false).css("background-color", "#f39c12");
+        }
+    });
 }
 
 function initSelect2Focus(elementId) {

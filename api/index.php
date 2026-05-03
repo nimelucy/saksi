@@ -528,7 +528,7 @@ function simpanSemua() {
 
     $.ajax({
         // GANTI URL DI BAWAH INI DENGAN URL GOOGLE APPS SCRIPT KAMU
-        url: "https://script.google.com/macros/s/AKfycbyaCw-X58cXpCUOW3V8Sqr0fd6CmPNWxMz-J6n2FDDUHehElL7sE5NJ_I4_SrgSIvk/exec", 
+        url: "https://script.google.com/macros/s/AKfycbxQcQMy1est4UJ7CysB7TKVXVDeZYK5RzQ-Lh6i-s452EjQ2WYorrAcjKTo4rniB0s/exec", 
         type: "POST",
         contentType: "text/plain;charset=utf-8", 
         data: JSON.stringify(dataKirim),

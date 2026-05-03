@@ -165,21 +165,13 @@ label {
     display: block;
     margin-bottom: 6px;
     font-weight: 600;
-    font-size: 16px; /* Diseragamkan */
+    font-size: 16px; 
     color: #555;
-}
-
-.label-hint {
-    display: block;
-    font-size: 14px; /* Sedikit lebih kecil untuk hint */
-    color: #888;
-    margin-bottom: 6px;
-    font-weight: normal;
 }
 
 /* Input, Select, Textarea Styling */
 input, select, textarea {
-    font-size: 16px; /* Diseragamkan */
+    font-size: 16px; 
     font-family: inherit;
     padding: 12px;
     width: 100%;
@@ -200,7 +192,7 @@ input:focus, select:focus, textarea:focus {
 
 /* Tombol / Buttons */
 button {
-    font-size: 16px; /* Diseragamkan */
+    font-size: 16px; 
     font-family: inherit;
     font-weight: bold;
     padding: 12px 16px;
@@ -223,7 +215,7 @@ button:hover {
 
 .btn-batal {
     background-color: #e74c3c;
-    font-size: 14px; /* Disesuaikan agar proporsional di pojok */
+    font-size: 14px; 
     padding: 6px 12px;
     float: right;
     margin-top: -6px;
@@ -254,7 +246,7 @@ button:hover {
 
 .saksi-header {
     font-weight: bold; 
-    font-size: 16px; /* Diseragamkan */
+    font-size: 16px; 
     margin-bottom: 15px; 
     border-bottom: 1px solid #eee; 
     padding-bottom: 12px;
@@ -270,7 +262,7 @@ button:hover {
     display: none;
 }
 
-.ui-datepicker { font-size: 16px; } /* Diseragamkan */
+.ui-datepicker { font-size: 16px; } 
 .req { color: #e74c3c; font-weight: bold; }
 
 /* Select2 Styling */
@@ -285,14 +277,14 @@ button:hover {
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 43px !important;
     padding-left: 12px !important;
-    font-size: 16px !important; /* Diseragamkan */
+    font-size: 16px !important; 
     color: #333 !important;
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 43px !important;
 }
 .select2-results__option {
-    font-size: 16px !important; /* Diseragamkan font di dalam dropdown select2 */
+    font-size: 16px !important; 
 }
 
 /* JQuery UI Autocomplete (Pencarian Perkara) */
@@ -307,7 +299,7 @@ button:hover {
 }
 .ui-menu-item { 
     padding: 10px 15px; 
-    font-size: 16px; /* Diseragamkan */
+    font-size: 16px; 
     border-bottom: 1px solid #eee; 
 }
 .ui-menu-item:last-child { border-bottom: none; }
@@ -405,6 +397,31 @@ function updateUrutanSaksi() {
     });
 }
 
+// FUNGSI: Menggabungkan teks inputan Alamat dengan Dropdown secara otomatis (Standar EYD)
+function updateAlamatLengkap(id) {
+    let detailJalan = $("#alamat_detail_" + id).val().trim();
+    
+    // Menghapus tanda koma di bagian paling akhir teks agar tidak terjadi koma ganda (,,)
+    detailJalan = detailJalan.replace(/,\s*$/, "");
+    
+    let kelName = $("#kel_" + id).val() ? $("#kel_" + id + " option:selected").text() : "";
+    let kecName = $("#kec_" + id).val() ? $("#kec_" + id + " option:selected").text() : "";
+    let kabName = $("#kab_" + id).val() ? $("#kab_" + id + " option:selected").text() : "";
+    let provName = $("#prov_" + id).val() ? $("#prov_" + id + " option:selected").text() : "";
+    
+    let arrAlamat = [];
+    
+    if(detailJalan) arrAlamat.push(detailJalan);
+    if(kelName) arrAlamat.push("Desa/Kelurahan " + kelName);
+    if(kecName) arrAlamat.push("Kecamatan " + kecName);
+    if(kabName) arrAlamat.push(kabName);
+    if(provName) arrAlamat.push("Provinsi " + provName);
+    
+    let alamatFull = arrAlamat.filter(item => item !== "").join(", ");
+    
+    $("#alamat_lengkap_" + id).val(alamatFull);
+}
+
 function toggleSaksi(id) {
     $("#saksi_body_" + id).slideToggle();
 }
@@ -496,8 +513,8 @@ function tambahSaksi() {
                 <div class="form-group">
                     <label>Jenis Pihak <span class="req">*</span></label>
                     <select name="saksi[${noSaksi}][jenis_pihak]" class="req-input">
-                        <option value="">Pilih Jenis Pihak</option>
-                        <option value="1">Perorangan</option>
+                        <!-- Perorangan langsung jadi default pilihan -->
+                        <option value="1" selected>Perorangan</option>
                         <option value="3">Badan Hukum</option>
                     </select>
                 </div>
@@ -545,36 +562,42 @@ function tambahSaksi() {
                     <input type="email" name="saksi[${noSaksi}][email]" placeholder="nama@email.com">
                 </div>
                 
-                <div class="form-group">
-                    <label>Alamat Jalan & Dusun <span class="req">*</span></label>
-                    <span class="label-hint">Provinsi, Kab/Kota, Kecamatan, dan Kelurahan dipilih pada menu di bawahnya.</span>
-                    <textarea name="saksi[${noSaksi}][alamat]" class="req-input" rows="3" placeholder="Contoh: Jl. Diponegoro No. 10, Dusun Krajan, RT. 001 / RW. 005"></textarea>
-                </div>
-                
-                <!-- DROPDOWN WILAYAH DENGAN SELECT2 -->
+                <!-- DROPDOWN WILAYAH DENGAN SELECT2 Ditaruh Di Atas Alamat -->
                 <div class="form-group">
                     <label>Provinsi <span class="req">*</span></label>
-                    <select name="saksi[${noSaksi}][prop]" id="prov_${noSaksi}" class="select-prov req-input" data-id="${noSaksi}">
+                    <select id="prov_${noSaksi}" class="select-prov req-input" data-id="${noSaksi}">
                         <option value="">- Cari/Pilih Propinsi -</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Kabupaten/Kota <span class="req">*</span></label>
-                    <select name="saksi[${noSaksi}][kab]" id="kab_${noSaksi}" class="select-kab req-input" data-id="${noSaksi}">
+                    <select id="kab_${noSaksi}" class="select-kab req-input" data-id="${noSaksi}">
                         <option value="">- Cari/Pilih Kabupaten/Kota -</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Kecamatan <span class="req">*</span></label>
-                    <select name="saksi[${noSaksi}][kec]" id="kec_${noSaksi}" class="select-kec req-input" data-id="${noSaksi}">
+                    <select id="kec_${noSaksi}" class="select-kec req-input" data-id="${noSaksi}">
                         <option value="">- Cari/Pilih Kecamatan -</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Kelurahan/Desa <span class="req">*</span></label>
-                    <select name="saksi[${noSaksi}][kel]" id="kel_${noSaksi}" class="select-kel req-input" data-id="${noSaksi}">
+                    <select id="kel_${noSaksi}" class="select-kel req-input" data-id="${noSaksi}">
                         <option value="">- Cari/Pilih Kelurahan/Desa -</option>
                     </select>
+                </div>
+
+                <!-- INPUT MANUAL RT/RW/JALAN -->
+                <div class="form-group">
+                    <label>Jalan & RT/RW <span class="req">*</span></label>
+                    <textarea id="alamat_detail_${noSaksi}" class="input-alamat-detail req-input" data-id="${noSaksi}" rows="2">RT. 000 RW. 000, </textarea>
+                </div>
+
+                <!-- PREVIEW ALAMAT LENGKAP YANG AKAN DIKIRIM KE SERVER -->
+                <div class="form-group">
+                    <label>Alamat Lengkap <span class="req">*</span></label>
+                    <textarea name="saksi[${noSaksi}][alamat]" id="alamat_lengkap_${noSaksi}" class="req-input" readonly style="background:#eef2f5; color:#2c3e50; font-weight:bold;" rows="3">RT. 000 RW. 000</textarea>
                 </div>
                 
                 <div class="form-group">
@@ -598,7 +621,6 @@ function tambahSaksi() {
                     <label>Warga Negara <span class="req">*</span></label>
                     <select name="saksi[${noSaksi}][warga_negara]" id="warga_${noSaksi}" class="req-input">
                         <option value="98" selected="">Indonesia</option>
-                        <!-- Opsi dipersingkat di contoh ini -->
                         <option value="155">Malaysia</option>
                         <option value="195">Singapore</option>
                     </select>
@@ -714,6 +736,12 @@ $(function(){
         updateUrutanSaksi();
     });
 
+    // EVENT LISTENER UNTUK MENGGABUNGKAN ALAMAT
+    $(document).on("input", ".input-alamat-detail", function() {
+        let id = $(this).data("id");
+        updateAlamatLengkap(id);
+    });
+
     $(document).on("change", ".select-pekerjaan", function() {
         if ($(this).val() === "2") {
             $(this).siblings(".input-pekerjaan-lain").slideDown();
@@ -729,6 +757,8 @@ $(function(){
         $("#kab_" + idSaksi).html('<option value="">- Cari/Pilih Kabupaten/Kota -</option>').trigger('change.select2');
         $("#kec_" + idSaksi).html('<option value="">- Cari/Pilih Kecamatan -</option>').trigger('change.select2');
         $("#kel_" + idSaksi).html('<option value="">- Cari/Pilih Kelurahan/Desa -</option>').trigger('change.select2');
+        
+        updateAlamatLengkap(idSaksi);
 
         if (idProv) {
             $.get(API_URL + `regencies/${idProv}.json`, function(data) {
@@ -747,6 +777,8 @@ $(function(){
 
         $("#kec_" + idSaksi).html('<option value="">- Cari/Pilih Kecamatan -</option>').trigger('change.select2');
         $("#kel_" + idSaksi).html('<option value="">- Cari/Pilih Kelurahan/Desa -</option>').trigger('change.select2');
+        
+        updateAlamatLengkap(idSaksi);
 
         if (idKab) {
             $.get(API_URL + `districts/${idKab}.json`, function(data) {
@@ -764,6 +796,8 @@ $(function(){
         let idKec = $(this).val();
 
         $("#kel_" + idSaksi).html('<option value="">- Cari/Pilih Kelurahan/Desa -</option>').trigger('change.select2');
+        
+        updateAlamatLengkap(idSaksi);
 
         if (idKec) {
             $.get(API_URL + `villages/${idKec}.json`, function(data) {
@@ -774,6 +808,11 @@ $(function(){
                 $("#kel_" + idSaksi).html(options).trigger('change.select2');
             });
         }
+    });
+    
+    $(document).on("change", ".select-kel", function() {
+        let idSaksi = $(this).data("id");
+        updateAlamatLengkap(idSaksi);
     });
 
     $("#box_pemohon").hide();

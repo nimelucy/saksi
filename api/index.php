@@ -115,12 +115,11 @@ if (isset($_GET['term'])) {
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
-<!-- LIBRARY SELECT2 UNTUK DROPDOWN PENCARIAN -->
+<!-- LIBRARY SELECT2 -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <style>
-/* Base Styling & Penyeragaman Font 16px */
 body {
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-color: #f4f7f6;
@@ -142,7 +141,6 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* Card Style for Boxes */
 .box, .saksi-box {
     background-color: #ffffff;
     border-radius: 10px;
@@ -169,7 +167,6 @@ label {
     color: #555;
 }
 
-/* Input, Select, Textarea Styling */
 input, select, textarea {
     font-size: 16px; 
     font-family: inherit;
@@ -190,7 +187,6 @@ input:focus, select:focus, textarea:focus {
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
-/* Tombol / Buttons */
 button {
     font-size: 16px; 
     font-family: inherit;
@@ -205,37 +201,20 @@ button {
     transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
-button:active {
-    transform: scale(0.98);
-}
-
-button:hover {
-    background-color: #2980b9;
-}
+button:active { transform: scale(0.98); }
+button:hover { background-color: #2980b9; }
 
 .btn-batal {
     background-color: #e74c3c;
     font-size: 14px; 
     padding: 6px 12px;
-    float: right;
-    margin-top: -6px;
 }
-
 .btn-batal:hover { background-color: #c0392b; }
 
-.btn-tambah {
-    width: 100%;
-    background-color: #2ecc71;
-}
-
+.btn-tambah { width: 100%; background-color: #2ecc71; }
 .btn-tambah:hover { background-color: #27ae60; }
 
-.btn-simpan {
-    width: 100%;
-    background-color: #f39c12;
-    margin-bottom: 40px;
-}
-
+.btn-simpan { width: 100%; background-color: #f39c12; margin-bottom: 40px; }
 .btn-simpan:hover { background-color: #d68910; }
 
 #cari {
@@ -255,24 +234,47 @@ button:hover {
     justify-content: space-between;
     align-items: center;
     color: #2c3e50;
+    user-select: none;
 }
 
-#listSaksiContainer {
-    width: 100%;
-    display: none;
+.toggle-hint {
+    font-size: 13px;
+    color: #95a5a6;
+    font-weight: normal;
+    margin-right: 15px;
+    font-style: italic;
 }
 
+.badge-lengkap {
+    background-color: #e8f8f5;
+    color: #27ae60;
+    font-size: 13px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+    font-weight: bold;
+}
+
+.badge-terkirim {
+    background-color: #d4e6f1;
+    color: #2980b9;
+    font-size: 13px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+    font-weight: bold;
+}
+
+#listSaksiContainer { width: 100%; display: none; }
 .ui-datepicker { font-size: 16px; } 
 .req { color: #e74c3c; font-weight: bold; }
 
-/* Select2 Styling */
 .select2-container .select2-selection--single {
     height: 45px !important;
     border: 1px solid #ccd1d9 !important;
     border-radius: 8px !important;
     outline: none;
     background-color: #fafafa !important;
-    transition: all 0.3s ease;
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 43px !important;
@@ -283,11 +285,8 @@ button:hover {
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 43px !important;
 }
-.select2-results__option {
-    font-size: 16px !important; 
-}
+.select2-results__option { font-size: 16px !important; }
 
-/* JQuery UI Autocomplete (Pencarian Perkara) */
 .ui-autocomplete {
     max-height: 300px;
     overflow-y: auto;
@@ -314,34 +313,27 @@ button:hover {
 
 <input type="text" id="cari" placeholder="Ketik nomor perkara...">
 
-<!-- Kotak Data Perkara -->
 <div class="box" id="formBox">
-
     <div class="form-group">
         <label>Nomor Perkara:</label>
         <input type="text" id="nomor" readonly style="background: #eef2f5; color: #7f8c8d;">
     </div>
-
     <div id="box_penggugat" class="form-group">
         <label id="label1"></label>
         <input type="text" id="penggugat" readonly style="background: #eef2f5; color: #7f8c8d;">
     </div>
-
     <div id="box_tergugat" class="form-group">
         <label id="label2"></label>
         <input type="text" id="tergugat" readonly style="background: #eef2f5; color: #7f8c8d;">
     </div>
-
     <div id="box_pemohon" class="form-group">
         <label>Pemohon:</label>
         <input type="text" id="pemohon" readonly style="background: #eef2f5; color: #7f8c8d;">
     </div>
 
     <button type="button" class="btn-tambah" onclick="tambahSaksi()">Tambah Saksi Baru</button>
-
 </div>
 
-<!-- Area Form Saksi -->
 <div id="listSaksiContainer">
     <div id="listSaksi"></div>
     <button type="button" class="btn-simpan" onclick="simpanSemua()">Simpan Semua Data</button>
@@ -355,53 +347,62 @@ const API_URL = "https://www.emsifa.com/api-wilayah-indonesia/api/";
 
 function toTitleCase(str) {
     if (!str) return '';
-    return str.toLowerCase().replace(/\b\w/g, function(s) {
-        return s.toUpperCase();
-    });
+    return str.toLowerCase().replace(/\b\w/g, function(s) { return s.toUpperCase(); });
 }
 
 function hitungUmur(tglLahirStr) {
     if (!tglLahirStr) return '';
     let parts = tglLahirStr.split(/[\/\-]/); 
     if (parts.length !== 3) return '';
-    
     let day = parseInt(parts[0], 10);
     let month = parseInt(parts[1], 10) - 1; 
     let year = parseInt(parts[2], 10);
-
     let dob = new Date(year, month, day);
     let today = new Date();
-    
     let age = today.getFullYear() - dob.getFullYear();
     let m = today.getMonth() - dob.getMonth();
-    
-    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-        age--;
-    }
-    
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) { age--; }
     return isNaN(age) || age < 0 ? '' : age;
 }
 
+// LOGIKA UPDATE URUTAN DAN BADGE LENGKAP/TERKIRIM
 function updateUrutanSaksi() {
     let urutan = 1;
     $(".saksi-box").each(function() {
         let idUnik = $(this).find(".input-nama-saksi").data("id");
         let namaInput = $(this).find(".input-nama-saksi").val();
+        let statusTerkirim = $(this).attr("data-status") === "terkirim";
         
-        if(namaInput.trim() === "") {
-            $("#title_saksi_" + idUnik).text("Saksi " + urutan + " (Belum Bernama)");
-        } else {
-            $("#title_saksi_" + idUnik).text("Saksi " + urutan + " - " + namaInput);
+        // Pengecekan kelengkapan data
+        let isLengkap = true;
+        $(this).find(".req-input").each(function() {
+            if ($(this).val() == null || $(this).val().toString().trim() === "") {
+                isLengkap = false;
+            }
+        });
+        
+        let valPek = $(this).find(".select-pekerjaan").val();
+        if (valPek === "2" && $(this).find(".input-pekerjaan-lain").val().trim() === "") {
+            isLengkap = false;
         }
+        
+        // Logika penentuan Badge
+        let badge = "";
+        if (statusTerkirim) {
+            badge = "<span class='badge-terkirim'>Terkirim</span>";
+        } else if (isLengkap) {
+            badge = "<span class='badge-lengkap'>Lengkap</span>";
+        }
+        
+        let namaTampil = namaInput.trim() === "" ? "(Belum Bernama)" : "- " + namaInput;
+        
+        $("#title_saksi_" + idUnik).html("Saksi " + urutan + " " + namaTampil + " " + badge);
         urutan++;
     });
 }
 
-// FUNGSI: Menggabungkan teks inputan Alamat dengan Dropdown secara otomatis (Standar EYD)
 function updateAlamatLengkap(id) {
     let detailJalan = $("#alamat_detail_" + id).val().trim();
-    
-    // Menghapus tanda koma di bagian paling akhir teks agar tidak terjadi koma ganda (,,)
     detailJalan = detailJalan.replace(/,\s*$/, "");
     
     let kelName = $("#kel_" + id).val() ? $("#kel_" + id + " option:selected").text() : "";
@@ -410,20 +411,27 @@ function updateAlamatLengkap(id) {
     let provName = $("#prov_" + id).val() ? $("#prov_" + id + " option:selected").text() : "";
     
     let arrAlamat = [];
-    
     if(detailJalan) arrAlamat.push(detailJalan);
     if(kelName) arrAlamat.push("Desa/Kelurahan " + kelName);
     if(kecName) arrAlamat.push("Kecamatan " + kecName);
     if(kabName) arrAlamat.push(kabName);
     if(provName) arrAlamat.push("Provinsi " + provName);
     
-    let alamatFull = arrAlamat.filter(item => item !== "").join(", ");
-    
-    $("#alamat_lengkap_" + id).val(alamatFull);
+    $("#alamat_lengkap_" + id).val(arrAlamat.filter(item => item !== "").join(", "));
+    updateUrutanSaksi();
 }
 
 function toggleSaksi(id) {
-    $("#saksi_body_" + id).slideToggle();
+    let body = $("#saksi_body_" + id);
+    let hint = $("#toggle_hint_" + id);
+    
+    body.slideToggle(300, function() {
+        if(body.is(":visible")) {
+            hint.text("▲ Tutup");
+        } else {
+            hint.text("▼ Ketuk Buka");
+        }
+    });
 }
 
 function hapusSaksi(id, event) {
@@ -441,6 +449,7 @@ function hapusSaksi(id, event) {
     }
 }
 
+// LOGIKA SIMPAN & UBAH STATUS KE "TERKIRIM"
 function simpanSemua() {
     let isValid = true;
     
@@ -481,16 +490,20 @@ function simpanSemua() {
         return;
     }
 
-    alert("Semua data lengkap dan valid! Siap diproses ke server.");
+    // JIKA VALID, UBAH STATUS KE TERKIRIM
+    alert("Data berhasil diproses ke server!");
+    
+    $(".saksi-box").attr("data-status", "terkirim");
+    $(".saksi-body").slideUp(); // Otomatis menutup semua form
+    $(".toggle-hint").text("▼ Ketuk Buka");
+    updateUrutanSaksi(); // Mengubah badge menjadi Terkirim
 }
 
 function initSelect2Focus(elementId) {
     $(elementId).select2({ width: '100%' }).on('select2:open', function() {
         setTimeout(function() {
             let searchField = document.querySelector('.select2-container--open .select2-search__field');
-            if (searchField) {
-                searchField.focus();
-            }
+            if (searchField) { searchField.focus(); }
         }, 100); 
     });
 }
@@ -499,21 +512,28 @@ function tambahSaksi() {
     noSaksi++;
     $("#listSaksiContainer").show();
     
-    $(".saksi-body").slideUp();
+    // Menutup form sebelumnya dan mengubah hint-nya
+    $(".saksi-body").slideUp(); 
+    $(".toggle-hint").text("▼ Ketuk Buka");
     
     let formHTML = `
-        <div class="saksi-box" id="saksi_${noSaksi}" style="display:none;">
+        <div class="saksi-box" id="saksi_${noSaksi}" data-status="draft" style="display:none;">
             
             <div class="saksi-header" onclick="toggleSaksi(${noSaksi})">
-                <span id="title_saksi_${noSaksi}">Saksi Baru</span>
-                <button type="button" class="btn-batal" onclick="hapusSaksi(${noSaksi}, event)">Hapus</button>
+                <div style="flex:1;">
+                    <span id="title_saksi_${noSaksi}">Saksi Baru</span>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <!-- PETUNJUK KLIK (TOGGLE HINT) -->
+                    <span class="toggle-hint" id="toggle_hint_${noSaksi}">▲ Tutup</span>
+                    <button type="button" class="btn-batal" onclick="hapusSaksi(${noSaksi}, event)">Hapus</button>
+                </div>
             </div>
             
             <div class="saksi-body" id="saksi_body_${noSaksi}" style="display:block;">
                 <div class="form-group">
                     <label>Jenis Pihak <span class="req">*</span></label>
                     <select name="saksi[${noSaksi}][jenis_pihak]" class="req-input">
-                        <!-- Perorangan langsung jadi default pilihan -->
                         <option value="1" selected>Perorangan</option>
                         <option value="3">Badan Hukum</option>
                     </select>
@@ -562,7 +582,6 @@ function tambahSaksi() {
                     <input type="email" name="saksi[${noSaksi}][email]" placeholder="nama@email.com">
                 </div>
                 
-                <!-- DROPDOWN WILAYAH DENGAN SELECT2 Ditaruh Di Atas Alamat -->
                 <div class="form-group">
                     <label>Provinsi <span class="req">*</span></label>
                     <select id="prov_${noSaksi}" class="select-prov req-input" data-id="${noSaksi}">
@@ -588,13 +607,11 @@ function tambahSaksi() {
                     </select>
                 </div>
 
-                <!-- INPUT MANUAL RT/RW/JALAN -->
                 <div class="form-group">
                     <label>Jalan & RT/RW <span class="req">*</span></label>
                     <textarea id="alamat_detail_${noSaksi}" class="input-alamat-detail req-input" data-id="${noSaksi}" rows="2">RT. 000 RW. 000, </textarea>
                 </div>
 
-                <!-- PREVIEW ALAMAT LENGKAP YANG AKAN DIKIRIM KE SERVER -->
                 <div class="form-group">
                     <label>Alamat Lengkap <span class="req">*</span></label>
                     <textarea name="saksi[${noSaksi}][alamat]" id="alamat_lengkap_${noSaksi}" class="req-input" readonly style="background:#eef2f5; color:#2c3e50; font-weight:bold;" rows="3">RT. 000 RW. 000</textarea>
@@ -706,6 +723,10 @@ function tambahSaksi() {
             
             $(this).css({"border": "1px solid #ccd1d9", "background-color": "#fafafa"});
             targetUmur.css({"border": "1px solid #ccd1d9", "background-color": "#eef2f5"});
+            
+            // Hapus status terkirim jika user ngedit form setelah dikirim
+            $(this).closest(".saksi-box").attr("data-status", "draft");
+            updateUrutanSaksi();
         }
     });
 
@@ -722,6 +743,7 @@ function tambahSaksi() {
 
 $(function(){
 
+    // Saat diketik/diubah, hilangkan border error dan update badge
     $(document).on("input change", ".req-input, .input-pekerjaan-lain", function() {
         if ($(this).val() !== null && $(this).val().toString().trim() !== "") {
             if($(this).hasClass("select2-hidden-accessible")) {
@@ -730,13 +752,12 @@ $(function(){
                 $(this).css({"border": "1px solid #ccd1d9", "background-color": "#fafafa"});
             }
         }
-    });
-
-    $(document).on("input", ".input-nama-saksi", function() {
+        
+        // Kalau data diedit lagi, ubah status Terkirim balik jadi Draft
+        $(this).closest(".saksi-box").attr("data-status", "draft");
         updateUrutanSaksi();
     });
 
-    // EVENT LISTENER UNTUK MENGGABUNGKAN ALAMAT
     $(document).on("input", ".input-alamat-detail", function() {
         let id = $(this).data("id");
         updateAlamatLengkap(id);
